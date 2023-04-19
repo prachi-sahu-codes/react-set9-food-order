@@ -7,10 +7,11 @@ export const DataContext = createContext(null);
 export const DataProvider = ({ children }) => {
   const [menuList, setMenuList] = useState([]);
   const [filteredInputList, setFilteredInputList] = useState([]);
-  const [input, setInput] = useState({
-    is_vegetarian: false,
-    is_spicy: false,
-  });
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isVegetarian, setIsVegetarian] = useState(false);
+  const [isSpicy, setIsSpicy] = useState(false);
+  const [sortBy, setSortBy] = useState("");
 
   const fetchData = async () => {
     try {
@@ -27,52 +28,63 @@ export const DataProvider = ({ children }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    let filteredMenuData = menuList.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    if (isVegetarian) {
+      filteredMenuData = filteredMenuData.filter(
+        (item) => item.is_vegetarian === true
+      );
+    }
+    if (isSpicy) {
+      filteredMenuData = filteredMenuData.filter(
+        (item) => item.is_spicy === true
+      );
+    }
+    if (sortBy === "sortLowToHigh") {
+      filteredMenuData = filteredMenuData.sort((a, b) => a.price - b.price);
+    } else if (sortBy === "sortHighToLow") {
+      filteredMenuData = filteredMenuData.sort((a, b) => b.price - a.price);
+    }
+    setFilteredInputList(filteredMenuData);
+  }, [menuList, searchTerm, isVegetarian, isSpicy, sortBy]);
+
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleVegCheckboxChange = (event) => {
+    setIsVegetarian(event.target.checked);
+  };
+
+  const handleSpicyCheckboxChange = (event) => {
+    setIsSpicy(event.target.checked);
+  };
+
+  const handleRadioChange = (event) => {
+    setSortBy(event.target.value);
+  };
+
+  /******loading******/
+
   if (menuList.length <= 0) {
     return <h1 className="page-heading">Loading...</h1>;
   }
-
-  /**********Input**************/
-
-  const handleInputChange = (event) => {
-    const enteredValue = event.target.value;
-    if (enteredValue) {
-      const filteredList = filteredInputList.filter((dish) =>
-        dish.name.toLowerCase().includes(enteredValue.toLowerCase())
-      );
-      setFilteredInputList(filteredList);
-    } else {
-      setFilteredInputList([...menuList]);
-    }
-  };
-
-  /*********radio******/
-
-  const handleRadioChange = (event) => {
-    const radioValue = event.target.value;
-
-    if (radioValue === "sortLowToHigh") {
-      setFilteredInputList((filteredInputList) =>
-        [...filteredInputList].sort((a, b) => a.price - b.price)
-      );
-    } else if (radioValue === "sortHighToLow") {
-      setFilteredInputList((filteredInputList) =>
-        [...filteredInputList].sort((a, b) => b.price - a.price)
-      );
-    } else {
-      return menuList;
-    }
-  };
 
   return (
     <DataContext.Provider
       value={{
         menuList,
-        input,
-        setInput,
-        handleInputChange,
         filteredInputList,
+        searchTerm,
+        isVegetarian,
+        isSpicy,
+        sortBy,
+        handleInputChange,
+        handleVegCheckboxChange,
+        handleSpicyCheckboxChange,
         handleRadioChange,
-        setFilteredInputList,
       }}
     >
       {children}
