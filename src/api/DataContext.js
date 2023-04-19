@@ -67,7 +67,6 @@ export const DataProvider = ({ children }) => {
     <DataContext.Provider
       value={{
         menuList,
-        setMenuList,
         input,
         setInput,
         handleInputChange,
