@@ -21,6 +21,7 @@ export const Filter = () => {
         onChange={handleInputChange}
         value={searchTerm}
         placeholder="Search food here"
+        className="inputSearch"
       />
       <label>
         <input

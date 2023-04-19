@@ -7,11 +7,13 @@ export const DataContext = createContext(null);
 export const DataProvider = ({ children }) => {
   const [menuList, setMenuList] = useState([]);
   const [filteredInputList, setFilteredInputList] = useState([]);
+  const [cartList, setCartList] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isVegetarian, setIsVegetarian] = useState(false);
   const [isSpicy, setIsSpicy] = useState(false);
   const [sortBy, setSortBy] = useState("");
+  const [isCouponApplied, setIsCouponApplied] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -72,6 +74,54 @@ export const DataProvider = ({ children }) => {
     return <h1 className="page-heading">Loading...</h1>;
   }
 
+  /*********Cart********/
+  const addCartHandler = ({
+    id,
+    name,
+    description,
+    price,
+    image,
+    delivery_time,
+  }) => {
+    const isItemPresent = cartList.findIndex((item) => item.id === id);
+    if (isItemPresent === -1) {
+      setCartList((cartList) => [
+        ...cartList,
+        { id, name, description, price, image, delivery_time, quantity: 1 },
+      ]);
+    }
+  };
+
+  const { totalCartPrice, totalDeliveryTime } = cartList.reduce(
+    (acc, item) => ({
+      totalCartPrice: acc.totalCartPrice + item.price,
+      totalDeliveryTime: acc.totalDeliveryTime + item.delivery_time,
+    }),
+    { totalCartPrice: 0, totalDeliveryTime: 0 }
+  );
+
+  /***********coupon and converting time to hours and mij************/
+
+  const clickCoupon = () => {
+    setIsCouponApplied(true);
+  };
+
+  const deliveryTime = () => {
+    if (totalDeliveryTime < 60) {
+      return `${totalDeliveryTime}min`;
+    } else {
+      const deliveryHour = Math.floor(totalDeliveryTime / 60);
+      const deliveryMin = totalDeliveryTime % 60;
+      return deliveryMin > 0
+        ? `${deliveryHour}hours ${deliveryMin}min`
+        : `${deliveryHour}hours`;
+    }
+  };
+
+  const finalPrice = isCouponApplied
+    ? Number(totalCartPrice.toFixed(2)) - 5
+    : totalCartPrice.toFixed(2);
+
   return (
     <DataContext.Provider
       value={{
@@ -85,6 +135,14 @@ export const DataProvider = ({ children }) => {
         handleVegCheckboxChange,
         handleSpicyCheckboxChange,
         handleRadioChange,
+        cartList,
+        addCartHandler,
+        totalCartPrice,
+        totalDeliveryTime,
+        isCouponApplied,
+        clickCoupon,
+        deliveryTime,
+        finalPrice,
       }}
     >
       {children}
