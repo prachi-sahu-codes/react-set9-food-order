@@ -6,19 +6,17 @@ export const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
   const [menuList, setMenuList] = useState([]);
-  const [filteredInputList, setFilteredInputList] = useState([]);
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isVegetarian, setIsVegetarian] = useState(false);
-  const [isSpicy, setIsSpicy] = useState(false);
-  const [sortBy, setSortBy] = useState("");
+  const [filters, setFilters] = useState({
+    search: "",
+    checkbox: [],
+    sort: null,
+  });
 
   const fetchData = async () => {
     try {
       const response = await fakeFetch("https://example.com/api/menu");
       if (response.status === 200) {
         setMenuList(response?.data?.menu);
-        setFilteredInputList(response?.data?.menu);
       }
     } catch (error) {
       console.log("Error 404: Food list not found.");
@@ -28,43 +26,43 @@ export const DataProvider = ({ children }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    let filteredMenuData = menuList.filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    if (isVegetarian) {
-      filteredMenuData = filteredMenuData.filter(
-        (item) => item.is_vegetarian === true
-      );
-    }
-    if (isSpicy) {
-      filteredMenuData = filteredMenuData.filter(
-        (item) => item.is_spicy === true
-      );
-    }
-    if (sortBy === "sortLowToHigh") {
-      filteredMenuData = filteredMenuData.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "sortHighToLow") {
-      filteredMenuData = filteredMenuData.sort((a, b) => b.price - a.price);
-    }
-    setFilteredInputList(filteredMenuData);
-  }, [menuList, searchTerm, isVegetarian, isSpicy, sortBy]);
-
-  const handleInputChange = (event) => {
-    setSearchTerm(event.target.value);
+  const searchHandler = (e) => {
+    setFilters((filters) => ({ ...filters, search: e.target.value }));
   };
 
-  const handleVegCheckboxChange = (event) => {
-    setIsVegetarian(event.target.checked);
+  const checkBoxHandler = (checkInput) => {
+    const checkContain = filters.checkbox.includes(checkInput);
+    setFilters((filters) => ({
+      ...filters,
+      checkbox: !checkContain
+        ? [...filters.checkbox, checkInput]
+        : filters.checkbox.filter((type) => type !== checkInput),
+    }));
   };
 
-  const handleSpicyCheckboxChange = (event) => {
-    setIsSpicy(event.target.checked);
+  const sortHandler = (sortInput) => {
+    setFilters((filters) => ({ ...filters, sort: sortInput }));
   };
 
-  const handleRadioChange = (event) => {
-    setSortBy(event.target.value);
-  };
+  const searchFilter = menuList.filter(
+    (food) =>
+      food.name.toLowerCase().includes(filters.search.toLowerCase()) &&
+      (filters.is_Veg ? food.is_vegetarian : food)
+  );
+
+  const checkboxFilter =
+    filters.checkbox.length > 0
+      ? searchFilter.filter((food) =>
+          filters.checkbox.every((type) => food[type])
+        )
+      : searchFilter;
+
+  const filteredInputList =
+    filters.sort !== null
+      ? checkboxFilter.sort((a, b) =>
+          filters.sort === "lowToHigh" ? a.price - b.price : b.price - a.price
+        )
+      : checkboxFilter;
 
   /******loading******/
 
@@ -75,16 +73,10 @@ export const DataProvider = ({ children }) => {
   return (
     <DataContext.Provider
       value={{
-        menuList,
         filteredInputList,
-        searchTerm,
-        isVegetarian,
-        isSpicy,
-        sortBy,
-        handleInputChange,
-        handleVegCheckboxChange,
-        handleSpicyCheckboxChange,
-        handleRadioChange,
+        searchHandler,
+        checkBoxHandler,
+        sortHandler,
       }}
     >
       {children}

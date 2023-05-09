@@ -35,7 +35,7 @@ export const CartProvider = ({ children }) => {
   /***********coupon and converting time to hours and mij************/
 
   const clickCoupon = () => {
-    setIsCouponApplied(true);
+    setIsCouponApplied((isCouponApplied) => !isCouponApplied);
   };
 
   const deliveryTime = () => {

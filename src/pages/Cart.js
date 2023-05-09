@@ -17,11 +17,7 @@ export const Cart = () => {
         <div className="sub-details">
           <span>Total Price: ${finalPrice}</span>
           <span>Total Delivery Time: {deliveryTime()}</span>
-          <button
-            onClick={clickCoupon}
-            className="couponBtn"
-            disabled={isCouponApplied}
-          >
+          <button onClick={clickCoupon} className="couponBtn">
             {isCouponApplied ? "Coupon Applied" : "Apply Coupon"}
           </button>
         </div>
