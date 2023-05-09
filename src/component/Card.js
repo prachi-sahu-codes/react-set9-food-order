@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useData } from "../api/DataContext";
+import { useCart } from "../api/CartContext";
 
 export const Card = ({
   id,
@@ -11,7 +11,7 @@ export const Card = ({
   quantity,
   noDetail,
 }) => {
-  const { cartList, addCartHandler } = useData();
+  const { cartList, addCartHandler } = useCart();
 
   const itemInCart = (selectedId) =>
     cartList.find((item) => item.id === selectedId); //if not present gives undefined

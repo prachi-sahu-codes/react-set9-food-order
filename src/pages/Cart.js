@@ -1,4 +1,4 @@
-import { useData } from "../api/DataContext";
+import { useCart } from "../api/CartContext";
 import { Card } from "../component/Card";
 
 export const Cart = () => {
@@ -9,7 +9,7 @@ export const Cart = () => {
     isCouponApplied,
     deliveryTime,
     finalPrice,
-  } = useData();
+  } = useCart();
 
   return (
     <>

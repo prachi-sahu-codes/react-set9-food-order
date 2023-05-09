@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useData } from "../api/DataContext";
+import { useCart } from "../api/CartContext";
 
 const getActiveStyle = ({ isActive }) => ({
   color: isActive ? "#240046" : "#7b2cbf",
@@ -7,7 +7,7 @@ const getActiveStyle = ({ isActive }) => ({
 });
 
 export const Header = () => {
-  const { cartList } = useData();
+  const { cartList } = useCart();
   return (
     <nav className="navigation">
       <NavLink to="/" style={getActiveStyle} className="navLink">
