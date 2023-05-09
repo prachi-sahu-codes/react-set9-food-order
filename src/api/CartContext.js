@@ -16,6 +16,7 @@ export const CartProvider = ({ children }) => {
     delivery_time,
   }) => {
     const isItemPresent = cartList.findIndex((item) => item.id === id);
+
     if (isItemPresent === -1) {
       setCartList((cartList) => [
         ...cartList,
@@ -54,10 +55,35 @@ export const CartProvider = ({ children }) => {
     ? Number(totalCartPrice.toFixed(2)) - 5
     : totalCartPrice.toFixed(2);
 
+  /**************increase decrease quantity**************/
+
+  const quantityCartHandler = (qtyInput, item) => {
+    if (qtyInput === "add") {
+      const changedCartList = cartList.map((cartItem) =>
+        cartItem === item ? { ...item, quantity: item.quantity + 1 } : cartItem
+      );
+      setCartList(() => changedCartList);
+    } else {
+      const changedCartList = cartList.map((cartItem) =>
+        cartItem === item
+          ? { ...item, quantity: item.quantity === 0 ? 0 : item.quantity - 1 }
+          : cartItem
+      );
+      const removeItem = changedCartList.filter((item) => item.quantity > 0);
+      setCartList(() => removeItem);
+    }
+  };
+
+  const removeItem = (itemSelected) => {
+    const removeItem = cartList.filter((item) => item !== itemSelected);
+    setCartList(() => removeItem);
+  };
+
   return (
     <CartContext.Provider
       value={{
         cartList,
+        setCartList,
         addCartHandler,
         totalCartPrice,
         totalDeliveryTime,
@@ -65,6 +91,8 @@ export const CartProvider = ({ children }) => {
         clickCoupon,
         deliveryTime,
         finalPrice,
+        quantityCartHandler,
+        removeItem,
       }}
     >
       {children}

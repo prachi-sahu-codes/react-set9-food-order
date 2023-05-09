@@ -89,7 +89,7 @@ button {
   background-color: var(--primary);
   border: none;
   border-radius: 5px;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   opacity: 0.95;
   box-shadow: 2px 2px 5px #7a2cbf75;
@@ -99,10 +99,6 @@ button:hover {
 }
 button:active {
   box-shadow: none;
-}
-.couponBtn {
-  background-color: red;
-  box-shadow: 2px 2px 5px #7d4f56a0;
 }
 
 .sub-heading {
@@ -142,4 +138,19 @@ label {
   font-size: 0.9rem;
   border-radius: 5px;
   border: 1px solid var(--primary);
+}
+
+.cart-qty {
+  padding: 1rem;
+  font-weight: 500;
+}
+
+.removeBtn {
+  background-color: red;
+  color: #fff;
+}
+
+.cartBtnFlex {
+  display: flex;
+  justify-content: space-between;
 }
