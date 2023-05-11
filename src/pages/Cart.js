@@ -19,9 +19,11 @@ export const Cart = () => {
         <div className="sub-details">
           <span>Total Price: ${finalPrice}</span>
           <span>Total Delivery Time: {deliveryTime()}</span>
+
           <button onClick={clickCoupon}>
             {isCouponApplied ? "Coupon Applied" : "Apply Coupon"}
           </button>
+
           <button className="removeBtn" onClick={() => setCartList([])}>
             Remove all items
           </button>
