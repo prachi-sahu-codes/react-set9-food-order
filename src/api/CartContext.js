@@ -27,7 +27,7 @@ export const CartProvider = ({ children }) => {
 
   const { totalCartPrice, totalDeliveryTime } = cartList.reduce(
     (acc, item) => ({
-      totalCartPrice: acc.totalCartPrice + item.price,
+      totalCartPrice: acc.totalCartPrice + item.price * item.quantity,
       totalDeliveryTime: acc.totalDeliveryTime + item.delivery_time,
     }),
     { totalCartPrice: 0, totalDeliveryTime: 0 }
